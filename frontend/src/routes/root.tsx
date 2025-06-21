@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import UrlInputBox from '../components/url-input-box'
 import { motion, AnimatePresence } from 'framer-motion'
 import FlashcardsView from '../components/flashcards-view'
@@ -7,11 +7,13 @@ import QuizView from '../components/quiz-view'
 const Root = () => {
   const [thinking, setThinking] = useState(false)
   const [movedDown, setMovedDown] = useState(false)
-  const [optionsChosen, setOptionsChosen] = useState([])
+  const [optionsChosen, setOptionsChosen] = useState<string[]>([])
 
   const [quiz, setQuiz] = useState([])
   const [flashcards, setFlashcards] = useState([])
   const [practice, setPractice] = useState([])
+
+  console.log(optionsChosen)
 
   return (
     <div className="min-w-screen min-h-screen flex justify-center items-center px-8">
@@ -23,8 +25,21 @@ const Root = () => {
             transition={{ duration: 1, delay: 0.2 }}
             className="w-full flex justify-center"
           >
-            <FlashcardsView flashcards={flashcards} />
-            {/* <QuizView /> */}
+            <AnimatePresence>
+              {movedDown && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 1, delay: 0.2 }}
+                  className="w-full flex justify-center gap-8"
+                >
+                  {optionsChosen.includes('flashcards') && (
+                    <FlashcardsView flashcards={flashcards} />
+                  )}
+                  {optionsChosen.includes('quiz') && <QuizView quiz={quiz} />}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
       </AnimatePresence>

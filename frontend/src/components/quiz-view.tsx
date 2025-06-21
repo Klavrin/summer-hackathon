@@ -5,35 +5,17 @@ import { FaCheck } from 'react-icons/fa'
 import { Button } from './ui/button'
 import FinishedQuizView from './finished-quiz-view'
 
-const QuizView = () => {
+interface QuizViewProps {
+  quiz: any
+}
+
+const QuizView = ({ quiz }: QuizViewProps) => {
   const [questionProgress, setQuestionProgress] = useState(0)
   const [chosenOption, setChosenOption] = useState<number | null>(null)
   const [quizFinished, setQuizFinished] = useState(false)
   const [rightIndeces, setRightIndeces] = useState<number[]>([])
-  const [quiz, setQuiz] = useState<any>([])
 
   const [choices, setChoices] = useState<number[]>([])
-
-  useEffect(() => {
-    const getQuiz = async () => {
-      try {
-        const response = await fetch('http://127.0.0.1:5000/quiz', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ link: 'https://www.youtube.com/watch?v=uI2xt8nTOlQ' }),
-        })
-
-        const data = await response.json() 
-        console.log('Received data:', data)
-      } catch (error) {
-        console.error('Error fetching quiz:', error)
-      }
-    }
-
-    getQuiz()
-  }, [])
 
   const handleNextQuestionButton = () => {
     if (questionProgress < quiz.length - 1) {
@@ -71,7 +53,7 @@ const QuizView = () => {
                 {quiz[questionProgress].question}
               </h1>
               <div className="flex flex-col gap-2">
-                {quiz[questionProgress].options.map((item:any, index:any) => (
+                {quiz[questionProgress].options.map((item: any, index: any) => (
                   <div
                     key={item}
                     className={cn(
