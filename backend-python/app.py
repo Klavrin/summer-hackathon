@@ -1,10 +1,10 @@
 from flask import Flask
 from dotenv import load_dotenv
 from routes.home import home_bp
-from routes.transcript import transcript_bp
-from routes.quiz import quiz_bp
-from routes.flashcards import flashcards_bp
-from routes.problems import problems_bp
+from routes.services.transcript import transcript_bp
+from routes.learn.quiz import quiz_bp
+from routes.learn.flashcards import flashcards_bp
+from routes.learn.problems import problems_bp
 
 load_dotenv()
 
