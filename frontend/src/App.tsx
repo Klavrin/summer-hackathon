@@ -1,15 +1,12 @@
-import { useEffect, useState } from 'react'
-import { Button } from './components/ui/button'
-import { YoutubeTranscript } from 'youtube-transcript'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Root from './routes/root'
 
-const App = () => {
-  const [data, setData] = useState('')
-
-  useEffect(() => {
-    YoutubeTranscript.fetchTranscript('').then((d: any) => setData(d))
-  }, [])
-
-  return <div>{data}</div>
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Root />}></Route>
+      </Routes>
+    </BrowserRouter>
+  )
 }
-
-export default App
