@@ -1,6 +1,8 @@
 import { Button } from '../components/ui/button'
 import { Input } from '../components/ui/input'
 import { Toggle } from '../components/ui/toggle'
+import { BsCardHeading, BsFillPuzzleFill } from 'react-icons/bs'
+import { MdQuiz } from 'react-icons/md'
 
 const Root = () => {
   return (
@@ -14,12 +16,15 @@ const Root = () => {
           <div className="flex justify-between">
             <div className="flex gap-2">
               <Toggle aria-label="Toggle italic" className="border-1">
+                <MdQuiz />
                 Quiz
               </Toggle>
               <Toggle aria-label="Toggle italic" className="border-1">
+                <BsCardHeading />
                 Flashcards
               </Toggle>
               <Toggle aria-label="Toggle italic" className="border-1">
+                <BsFillPuzzleFill />
                 Practice Problems
               </Toggle>
             </div>
