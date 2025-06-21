@@ -1,5 +1,5 @@
 const hello = (req, res) => {
-  res.send('Hello world!')
+  res.send('CODWER GET THE FUCK OUT OF MY LOCALHOST (respectfully)')
 }
 
-module.exports = hello
+export default hello
