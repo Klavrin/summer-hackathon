@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from routes.services.transcript import get_transcript
+from routes.services.parser import parse_quiz
 import openai
 import os
 
@@ -34,13 +35,18 @@ def generate_quiz(transcript):
 
 @quiz_bp.route('/quiz', methods=['POST'])
 def quiz():
-    data = request.get_json()
+    data = request.get_json() or {}
     link = data.get('link')
     if not link:
         return jsonify({'error': 'No link provided'}), 400
+
     try:
         transcript = get_transcript(link)
-        quiz_text = generate_quiz(transcript)
-        return jsonify({'quiz': quiz_text})
+        raw = generate_quiz(transcript)
+        quiz_list = parse_quiz(raw)
+        return jsonify({'quiz': quiz_list}), 200
+
+    except ValueError as ve:
+        return jsonify({'error': f'Could not parse quiz: {ve}'}), 500
     except Exception as e:
         return jsonify({'error': str(e)}), 500

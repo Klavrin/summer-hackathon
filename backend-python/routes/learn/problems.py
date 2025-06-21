@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from routes.services.transcript import get_transcript
+from routes.services.parser import parse_test
 import openai
 import os
 
@@ -9,11 +10,16 @@ def generate_problems(transcript):
     client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     prompt = (
         "# GOAL\n\n"
-        "You will now write a test with practical tasks based on the input specified in the \"INPUT\" section with the specified format.\n"
-        "# FORMAT:\n\n"
-        "SHOULD BE A PARSABLE PYTHON TYPE SUCH THAT IT CAN BE DIRECTLY READ BY PYTHON AND SHOULD CONTAIN A LIST OF STRINGS\n"
+        "Create a set of practical test tasks based on the transcript below.\n\n"
+        "# FORMAT\n\n"
+        "Return **only valid JSON**: a single array of strings.  Example:\n"
+        "[\n"
+        "  \"Task 1 description\",\n"
+        "  \"Task 2 description\",\n"
+        "  \"Task 3 description\"\n"
+        "]\n\n"
         "# INPUT\n\n"
-        f"Transcript:\n{transcript}\n\n"
+        f"{transcript}\n"
     )
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
@@ -32,9 +38,14 @@ def problems():
     link = data.get('link')
     if not link:
         return jsonify({'error': 'No link provided'}), 400
+
     try:
         transcript = get_transcript(link)
-        problems_text = generate_problems(transcript)
-        return jsonify({'problems': problems_text})
+        raw = generate_problems(transcript)
+        problems_list = parse_test(raw)
+        return jsonify({'problems': problems_list}), 200
+
+    except ValueError as ve:
+        return jsonify({'error': f'Could not parse problems: {ve}'}), 500
     except Exception as e:
         return jsonify({'error': str(e)}), 500

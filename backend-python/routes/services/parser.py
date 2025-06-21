@@ -1,44 +1,97 @@
 import ast
+import json
 
-def parse_quiz(input):
-    """Takes as input readable python dictionary string
-       and return the object in memory.
-
-       Parameters:
-           'question'
-           'choice1'
-           'choice2'
-           'choice3'
-           'choice4'
-           'answer'
+def parse_quiz(llm_output: str):
     """
-    quiz_start = 0
-    if input[0]!='[':
-        quiz_start = input.index('[')
-    input = input[quiz_start:]
-    quizzes = ast.literal_eval(input)
-    return quizzes
-
-def parse_test(input):
-    """Takes as input readable python list of strings
-       and return the list of strings in memory.
+    Extract the first JSON array from llm_output and parse it.
+    Returns a list of dicts, each with keys:
+      - question
+      - choice1
+      - choice2
+      - choice3
+      - choice4
+      - answer
     """
-    test_start = 0
-    if input[0] != '[':
-        test_start = input.index('[')
-    input = input[test_start:]
-    tests = ast.literal_eval(input)
-    return tests
+    start = llm_output.find('[')
+    if start == -1:
+        raise ValueError("No JSON array found in LLM output")
 
-def parse_flashcards(input):
-    """Takes as input readable python dictionary string
-       and return the object in memory.
-       'front'
-       'backshot'
+    depth = 0
+    end = None
+    for i, ch in enumerate(llm_output[start:], start):
+        if ch == '[':
+            depth += 1
+        elif ch == ']':
+            depth -= 1
+            if depth == 0:
+                end = i + 1
+                break
+
+    if end is None:
+        raise ValueError("Could not find matching ']' for JSON array")
+
+    payload = llm_output[start:end]
+    try:
+        return json.loads(payload)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON payload: {e}")
+
+def parse_test(llm_output: str):
     """
-    flash_start = 0
-    if input[0] != '[':
-        flash_start = input.index('[')
-    input = input[flash_start:]
-    flashcards = ast.literal_eval(input)
-    return flashcards
+    Extract the first JSON array from llm_output and parse it.
+    Returns a Python list of strings.
+    """
+    start = llm_output.find('[')
+    if start == -1:
+        raise ValueError("No JSON array found in LLM output")
+
+    # find the matching closing bracket
+    depth = 0
+    end = None
+    for i, ch in enumerate(llm_output[start:], start=start):
+        if ch == '[':
+            depth += 1
+        elif ch == ']':
+            depth -= 1
+            if depth == 0:
+                end = i + 1
+                break
+
+    if end is None:
+        raise ValueError("Could not find matching ']' for JSON array")
+
+    payload = llm_output[start:end]
+    try:
+        return json.loads(payload)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON payload: {e}")
+
+def parse_flashcards(llm_output: str):
+    """
+    Extract the first JSON array from llm_output and parse it.
+    Returns a Python list of {"front": "...", "back": "..."} dicts.
+    """
+    start = llm_output.find('[')
+    if start == -1:
+        raise ValueError("No JSON array found in LLM output")
+
+    # find matching closing bracket
+    depth = 0
+    end = None
+    for i, ch in enumerate(llm_output[start:], start=start):
+        if ch == '[':
+            depth += 1
+        elif ch == ']':
+            depth -= 1
+            if depth == 0:
+                end = i + 1
+                break
+
+    if end is None:
+        raise ValueError("Could not find matching ']' for JSON array")
+
+    json_payload = llm_output[start:end]
+    try:
+        return json.loads(json_payload)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON payload: {e}")
