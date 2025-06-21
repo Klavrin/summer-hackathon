@@ -1,20 +1,21 @@
 from flask import Blueprint, request, jsonify
-from routes.transcript import get_transcript
+from transcript import get_transcript
 import openai
 import os
 
 flashcards_bp = Blueprint('flashcards', __name__)
 
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
 def generate_flashcards(transcript):
+    client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     prompt = (
-        "You will now write flashcards based on the input specified in the \"INPUT\" section with the specified format in the \"FORMAT\" section.\n\n"
-        "\n\n"
-        "*KEY WORD*"    
-        "*DEFINITION*"
+        "# GOAL\n\n"
+        "You will now write flashcards based on the input specified in the \"INPUT\" section with the specified format in the \"FORMAT\" section."
+        "# FORMAT\n\n"
+        "SHOULD BE A PARSABLE DICTIONARY PYTHON TYPE SUCH THAT IT CAN BE DIRECTLY READ BY PYTHON AND SHOULD CONTAIN A LIST OF:\n"    
+        "\'front\'\n"
+        "\'backshot\'\n"
+        "# INPUT\n\n"
         f"Transcript:\n{transcript}\n\n"
-        "Flashcards:"
     )
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",

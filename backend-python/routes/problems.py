@@ -1,18 +1,17 @@
 from flask import Blueprint, request, jsonify
-from routes.transcript import get_transcript
+from transcript import get_transcript
 import openai
 import os
 
 problems_bp = Blueprint('problems', __name__)
 
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
 def generate_problems(transcript):
+    client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     prompt = (
         "You will now write a test with practical tasks based on the input specified in the \"INPUT\" section with the specified format.\n"
         "FORMAT:\n\n"
         "*SHORT DESCRIPTION OF THE PRACTICAL TASK*"
-*       "REQUIREMENTS OF THE PRACTICAL TASK*"
+        "*REQUIREMENTS OF THE PRACTICAL TASK*"
         f"Transcript:\n{transcript}\n\n"
         "Problems:"
     )
