@@ -1,15 +1,14 @@
-import { useEffect, useState } from 'react'
 import { Button } from './components/ui/button'
-import { YoutubeTranscript } from 'youtube-transcript'
+import { Input } from './components/ui/input'
 
 const App = () => {
-  const [data, setData] = useState('')
-
-  useEffect(() => {
-    YoutubeTranscript.fetchTranscript('').then((d: any) => setData(d))
-  }, [])
-
-  return <div>{data}</div>
+  return (
+    <div className="min-w-screen min-h-screen flex justify-center items-center">
+      <div className="w-[720px]">
+        <Input placeholder="Enter YouTube video URL..." className="h-10" />
+      </div>
+    </div>
+  )
 }
 
 export default App
