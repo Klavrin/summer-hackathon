@@ -52,7 +52,6 @@ const AIVoiceAssistant: React.FC = () => {
   const [displayedResponse, setDisplayedResponse] = useState<string>('');
   const [circleScale, setCircleScale] = useState<number>(1);
   const [audioLevel, setAudioLevel] = useState<number>(0);
-  const [waveHeights, setWaveHeights] = useState<number[]>([20, 30, 25]);
   
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -60,7 +59,6 @@ const AIVoiceAssistant: React.FC = () => {
   const microphoneRef = useRef<MediaStreamAudioSourceNode | null>(null);
   const animationRef = useRef<number | null>(null);
   const speechSynthRef = useRef<SpeechSynthesisUtterance | null>(null);
-  const waveAnimationRef = useRef<number | null>(null);
 
   // Initialize speech recognition
   useEffect(() => {
@@ -96,26 +94,8 @@ const AIVoiceAssistant: React.FC = () => {
       if (speechSynthRef.current) {
         window.speechSynthesis.cancel();
       }
-      if (waveAnimationRef.current) {
-        cancelAnimationFrame(waveAnimationRef.current);
-      }
     };
   }, []);
-
-  // Animate wave lines
-  const animateWaves = (): void => {
-    const time = Date.now() * 0.005;
-    const newHeights = [
-      20 + Math.sin(time) * 15 + (audioLevel * 0.3),
-      30 + Math.sin(time + 1) * 20 + (audioLevel * 0.4),
-      25 + Math.sin(time + 2) * 18 + (audioLevel * 0.35)
-    ];
-    setWaveHeights(newHeights);
-    
-    if (isListening) {
-      waveAnimationRef.current = requestAnimationFrame(animateWaves);
-    }
-  };
 
   // Audio analysis for microphone input
   const startAudioAnalysis = async (): Promise<void> => {
@@ -135,13 +115,12 @@ const AIVoiceAssistant: React.FC = () => {
           analyserRef.current.getByteFrequencyData(dataArray);
           const average = dataArray.reduce((a, b) => a + b) / dataArray.length;
           setAudioLevel(average);
-          setCircleScale(1 + (average / 255) * 0.3);
+          setCircleScale(1 + (average / 255) * 0.5);
           animationRef.current = requestAnimationFrame(updateAudioLevel);
         }
       };
       
       updateAudioLevel();
-      animateWaves();
     } catch (error) {
       console.error('Error accessing microphone:', error);
     }
@@ -151,15 +130,11 @@ const AIVoiceAssistant: React.FC = () => {
     if (animationRef.current) {
       cancelAnimationFrame(animationRef.current);
     }
-    if (waveAnimationRef.current) {
-      cancelAnimationFrame(waveAnimationRef.current);
-    }
     if (audioContextRef.current) {
       audioContextRef.current.close();
     }
     setAudioLevel(0);
     setCircleScale(1);
-    setWaveHeights([20, 30, 25]);
   };
 
   const toggleListening = (): void => {
@@ -177,7 +152,7 @@ const AIVoiceAssistant: React.FC = () => {
     }
   };
 
-  // Simple AI responses
+  // Simple AI responses (in a real app, you'd call an actual AI API)
   const getAIResponse = (input: string): string => {
     const responses: string[] = [
       "That's an interesting question! Let me think about that for a moment.",
@@ -198,20 +173,6 @@ const AIVoiceAssistant: React.FC = () => {
     animateResponse(aiResponse);
   };
 
-  // Animate speaking waves
-  const animateSpeakingWaves = (): void => {
-    if (isSpeaking) {
-      const time = Date.now() * 0.008;
-      const newHeights = [
-        25 + Math.sin(time) * 20,
-        35 + Math.sin(time + 0.5) * 25,
-        30 + Math.sin(time + 1) * 22
-      ];
-      setWaveHeights(newHeights);
-      waveAnimationRef.current = requestAnimationFrame(animateSpeakingWaves);
-    }
-  };
-
   // Animate text word by word and speak
   const animateResponse = (text: string): void => {
     setIsSpeaking(true);
@@ -228,21 +189,16 @@ const AIVoiceAssistant: React.FC = () => {
       utterance.onend = () => {
         setIsSpeaking(false);
         setCircleScale(1);
-        if (waveAnimationRef.current) {
-          cancelAnimationFrame(waveAnimationRef.current);
-        }
-        setWaveHeights([20, 30, 25]);
       };
       
       // Animate circle while speaking
       const speakingAnimation = (): void => {
         if (isSpeaking) {
-          setCircleScale(1 + Math.sin(Date.now() * 0.01) * 0.15);
+          setCircleScale(1 + Math.sin(Date.now() * 0.01) * 0.2);
           requestAnimationFrame(speakingAnimation);
         }
       };
       speakingAnimation();
-      animateSpeakingWaves();
       
       speechSynthRef.current = utterance;
       window.speechSynthesis.speak(utterance);
@@ -253,7 +209,7 @@ const AIVoiceAssistant: React.FC = () => {
       if (currentIndex < words.length) {
         setDisplayedResponse(prev => prev + (currentIndex > 0 ? ' ' : '') + words[currentIndex]);
         currentIndex++;
-        setTimeout(displayWords, 150);
+        setTimeout(displayWords, 150); // Adjust speed here
       }
     };
     
@@ -266,122 +222,98 @@ const AIVoiceAssistant: React.FC = () => {
     }
     setIsSpeaking(false);
     setCircleScale(1);
-    if (waveAnimationRef.current) {
-      cancelAnimationFrame(waveAnimationRef.current);
-    }
-    setWaveHeights([20, 30, 25]);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex flex-col items-center justify-center p-8">
-      {/* AI Agent Logo */}
-      <div className="relative mb-16">
-        {/* Blue wave rings when speaking */}
-        {isSpeaking && (
-          <>
-            <div className="absolute inset-0 w-40 h-40 rounded-full border-2 border-blue-400 opacity-60 animate-ping" style={{ animationDuration: '1.5s' }}></div>
-            <div className="absolute inset-0 w-40 h-40 rounded-full border-2 border-blue-300 opacity-40 animate-ping" style={{ animationDuration: '2s', animationDelay: '0.3s' }}></div>
-            <div className="absolute inset-0 w-40 h-40 rounded-full border-2 border-blue-200 opacity-30 animate-ping" style={{ animationDuration: '2.5s', animationDelay: '0.6s' }}></div>
-          </>
-        )}
-        
-        {/* App Logo Container */}
+    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-8">
+      {/* AI Agent Circle */}
+      <div className="relative mb-12">
         <div 
-          className="w-40 h-40 bg-white rounded-full shadow-2xl border-4 border-gray-200 flex items-center justify-center relative overflow-hidden"
+          className="w-32 h-32 bg-white rounded-full shadow-lg transition-transform duration-100 ease-out border-2 border-gray-100"
           style={{ 
             transform: `scale(${circleScale})`,
-            filter: isListening || isSpeaking ? 'drop-shadow(0 0 20px rgba(59, 130, 246, 0.4))' : 'drop-shadow(0 10px 25px rgba(0, 0, 0, 0.15))'
+            boxShadow: isListening || isSpeaking ? '0 0 30px rgba(59, 130, 246, 0.3)' : '0 10px 25px rgba(0, 0, 0, 0.1)'
           }}
         >
-          {/* App Logo - Replace this with your actual logo */}
-          <div className="text-6xl font-bold bg-gradient-to-br from-blue-500 to-purple-600 bg-clip-text text-transparent">
-            AI
+          <div className="w-full h-full flex items-center justify-center">
+            {isListening && (
+              <div className="w-4 h-4 bg-red-500 rounded-full animate-pulse"></div>
+            )}
+            {isSpeaking && (
+              <div className="w-4 h-4 bg-blue-500 rounded-full animate-pulse"></div>
+            )}
+            {!isListening && !isSpeaking && (
+              <div className="w-4 h-4 bg-gray-400 rounded-full"></div>
+            )}
           </div>
-          
-          {/* Subtle background pattern */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 opacity-30 rounded-full"></div>
         </div>
         
-        {/* Three blue reactive lines when user is speaking (listening mode) */}
+        {/* Audio level indicator */}
         {isListening && (
-          <div className="absolute -bottom-12 left-1/2 transform -translate-x-1/2 flex items-end gap-2">
-            {waveHeights.map((height, index) => (
-              <div
-                key={index}
-                className="w-2 bg-blue-500 rounded-full transition-all duration-100 shadow-lg"
-                style={{ height: `${height}px` }}
-              ></div>
-            ))}
+          <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2">
+            <div 
+              className="h-2 bg-blue-500 rounded-full transition-all duration-100"
+              style={{ width: `${Math.max(20, audioLevel)}px` }}
+            ></div>
           </div>
-        )}
-        
-        {/* Subtle glow effect */}
-        {(isListening || isSpeaking) && (
-          <div className="absolute inset-0 w-40 h-40 rounded-full bg-blue-400 opacity-10 animate-pulse"></div>
         )}
       </div>
 
       {/* Controls */}
-      <div className="flex gap-6 mb-12">
+      <div className="flex gap-4 mb-8">
         <button
           onClick={toggleListening}
-          className={`p-5 rounded-full transition-all duration-300 transform hover:scale-110 ${
+          className={`p-4 rounded-full transition-all duration-200 ${
             isListening 
-              ? 'bg-red-500 hover:bg-red-600 text-white shadow-lg shadow-red-200' 
-              : 'bg-white hover:bg-gray-50 text-gray-700 shadow-lg border border-gray-200'
+              ? 'bg-red-500 hover:bg-red-600 text-white shadow-lg' 
+              : 'bg-white hover:bg-gray-50 text-gray-700 shadow-md border border-gray-200'
           }`}
           disabled={isSpeaking}
         >
-          {isListening ? <MicOff size={28} /> : <Mic size={28} />}
+          {isListening ? <MicOff size={24} /> : <Mic size={24} />}
         </button>
         
         {isSpeaking && (
           <button
             onClick={stopSpeaking}
-            className="p-5 rounded-full bg-white hover:bg-gray-50 text-gray-700 shadow-lg border border-gray-200 transition-all duration-300 transform hover:scale-110"
+            className="p-4 rounded-full bg-white hover:bg-gray-50 text-gray-700 shadow-md border border-gray-200 transition-all duration-200"
           >
-            <Volume2 size={28} />
+            <Volume2 size={24} />
           </button>
         )}
       </div>
 
       {/* Status */}
-      <div className="text-center mb-12">
+      <div className="text-center mb-8">
         {isListening && (
-          <div className="flex items-center justify-center gap-2">
-            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-            <p className="text-blue-600 font-semibold text-lg">I'm listening...</p>
-          </div>
+          <p className="text-blue-600 font-medium">Listening...</p>
         )}
         {isSpeaking && (
-          <div className="flex items-center justify-center gap-2">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <p className="text-green-600 font-semibold text-lg">Speaking...</p>
-          </div>
+          <p className="text-green-600 font-medium">Speaking...</p>
         )}
         {!isListening && !isSpeaking && (
-          <p className="text-gray-500 text-lg">Click the microphone to start talking</p>
+          <p className="text-gray-500">Click the microphone to start</p>
         )}
       </div>
 
       {/* Transcript */}
       {transcript && (
-        <div className="w-full max-w-3xl mb-8">
-          <h3 className="text-sm font-bold text-gray-600 mb-3 uppercase tracking-wide">You said:</h3>
-          <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-white/50">
-            <p className="text-gray-800 text-lg leading-relaxed">{transcript}</p>
+        <div className="w-full max-w-2xl mb-6">
+          <h3 className="text-sm font-semibold text-gray-600 mb-2">You said:</h3>
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+            <p className="text-gray-800">{transcript}</p>
           </div>
         </div>
       )}
 
       {/* AI Response */}
       {displayedResponse && (
-        <div className="w-full max-w-3xl">
-          <h3 className="text-sm font-bold text-gray-600 mb-3 uppercase tracking-wide">AI Response:</h3>
-          <div className="bg-gradient-to-r from-blue-50/80 to-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-blue-100/50">
-            <p className="text-gray-800 text-lg leading-relaxed">
+        <div className="w-full max-w-2xl">
+          <h3 className="text-sm font-semibold text-gray-600 mb-2">AI Response:</h3>
+          <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+            <p className="text-gray-800">
               {displayedResponse}
-              {isSpeaking && <span className="animate-pulse text-blue-500 ml-1">|</span>}
+              {isSpeaking && <span className="animate-pulse">|</span>}
             </p>
           </div>
         </div>
@@ -389,8 +321,8 @@ const AIVoiceAssistant: React.FC = () => {
 
       {/* Browser compatibility note */}
       {!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) && (
-        <div className="mt-12 p-6 bg-yellow-50/80 backdrop-blur-sm border border-yellow-200 rounded-2xl shadow-lg">
-          <p className="text-yellow-800 text-sm text-center">
+        <div className="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <p className="text-yellow-800 text-sm">
             Speech recognition is not supported in this browser. Please use Chrome or Edge for the best experience.
           </p>
         </div>
