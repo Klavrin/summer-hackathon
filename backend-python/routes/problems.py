@@ -8,12 +8,12 @@ problems_bp = Blueprint('problems', __name__)
 def generate_problems(transcript):
     client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     prompt = (
+        "# GOAL\n\n"
         "You will now write a test with practical tasks based on the input specified in the \"INPUT\" section with the specified format.\n"
-        "FORMAT:\n\n"
-        "*SHORT DESCRIPTION OF THE PRACTICAL TASK*"
-        "*REQUIREMENTS OF THE PRACTICAL TASK*"
+        "# FORMAT:\n\n"
+        "SHOULD BE A PARSABLE PYTHON TYPE SUCH THAT IT CAN BE DIRECTLY READ BY PYTHON AND SHOULD CONTAIN A LIST OF STRINGS\n"
+        "# INPUT\n\n"
         f"Transcript:\n{transcript}\n\n"
-        "Problems:"
     )
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
