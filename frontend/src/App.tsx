@@ -1,10 +1,8 @@
-import { Button } from './components/ui/button'
+import UrlInputPage from './components/UrlInputPage'
 
 const App = () => {
   return (
-    <div>
-      <Button>Hello</Button>
-    </div>
+    <UrlInputPage />
   )
 }
 
