@@ -7,17 +7,11 @@ import QuizView from '../components/quiz-view'
 const Root = () => {
   const [thinking, setThinking] = useState(false)
   const [movedDown, setMovedDown] = useState(false)
+  const [optionsChosen, setOptionsChosen] = useState([])
 
-  useEffect(() => {
-    if (thinking) {
-      const timer = setTimeout(() => {
-        setThinking(false)
-        setMovedDown(true)
-      }, 3000) // 3 seconds thinking
-
-      return () => clearTimeout(timer)
-    }
-  }, [thinking])
+  const [quiz, setQuiz] = useState([])
+  const [flashcards, setFlashcards] = useState([])
+  const [practice, setPractice] = useState([])
 
   return (
     <div className="min-w-screen min-h-screen flex justify-center items-center px-8">
@@ -29,8 +23,8 @@ const Root = () => {
             transition={{ duration: 1, delay: 0.2 }}
             className="w-full flex justify-center"
           >
-            {/* <FlashcardsView /> */}
-            <QuizView />
+            <FlashcardsView flashcards={flashcards} />
+            {/* <QuizView /> */}
           </motion.div>
         )}
       </AnimatePresence>
@@ -58,7 +52,16 @@ const Root = () => {
           )}
         </AnimatePresence>
 
-        <UrlInputBox thinking={thinking} setThinking={setThinking} />
+        <UrlInputBox
+          thinking={thinking}
+          setThinking={setThinking}
+          setMovedDown={setMovedDown}
+          setQuiz={setQuiz}
+          setFlashcards={setFlashcards}
+          setPractice={setPractice}
+          optionsChosen={optionsChosen}
+          setOptionsChosen={setOptionsChosen}
+        />
       </motion.div>
     </div>
   )
