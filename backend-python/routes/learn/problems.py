@@ -22,12 +22,12 @@ def generate_problems(transcript):
         f"{transcript}\n"
     )
     response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-3.5-turbo", #update to gpt-4 for demo
         messages=[
             {"role": "system", "content": "You are a world-class assistant specialised in creating tests for students."},
             {"role": "user", "content": prompt}
         ],
-        max_tokens=700,
+        max_tokens=700, # update to 1000-2000 for gpt-4
         temperature=0.7,
     )
     return response.choices[0].message.content.strip()
