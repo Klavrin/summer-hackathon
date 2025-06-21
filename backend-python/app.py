@@ -1,23 +1,19 @@
-from flask import Flask, request, jsonify
-from main import get_transcript
+from flask import Flask
+from dotenv import load_dotenv
+from routes.home import home_bp
+from routes.transcript import transcript_bp
+from routes.quiz import quiz_bp
+from routes.flashcards import flashcards_bp
+from routes.problems import problems_bp
+
+load_dotenv()
 
 app = Flask(__name__)
-
-@app.route('/')
-def home():
-    return 'Hello, Flask!'
-
-@app.route('/transcript', methods=['POST'])
-def transcript():
-    data = request.get_json()
-    link = data.get('link')
-    if not link:
-        return jsonify({'error': 'No link provided'}), 400
-    try:
-        transcript_text = get_transcript(link)
-        return jsonify({'transcript': transcript_text})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+app.register_blueprint(home_bp)
+app.register_blueprint(transcript_bp)
+app.register_blueprint(quiz_bp)
+app.register_blueprint(flashcards_bp)
+app.register_blueprint(problems_bp)
 
 if __name__ == '__main__':
     app.run(debug=True)
