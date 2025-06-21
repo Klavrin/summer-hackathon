@@ -18,7 +18,7 @@ const UrlInputBox = ({ thinking, setThinking }: UrlInputBoxProps) => {
       <AnimatePresence>
         {thinking && (
           <motion.div
-            className="absolute w-[97%] h-[143px] gradient-animate -z-10 rounded-[20px] -top-8 px-3 py-1.5 text-white text-sm"
+            className="absolute w-2/3 md:w-[97%] h-[143px] gradient-animate -z-10 rounded-[20px] -top-8 px-3 py-1.5 text-white text-sm transition-all"
             initial={{ filter: 'blur(20px)', opacity: 0 }}
             animate={{ filter: 'blur(0px)', opacity: 1 }}
             exit={{ filter: 'blur(20px)', opacity: 0 }}
@@ -32,7 +32,7 @@ const UrlInputBox = ({ thinking, setThinking }: UrlInputBoxProps) => {
         )}
       </AnimatePresence>
 
-      <div className="w-full flex flex-col gap-2 border-1 p-2 rounded-2xl shadow-sm bg-white">
+      <div className="w-[68%] md:w-full flex flex-col gap-2 border-1 p-2 rounded-2xl shadow-sm bg-white transition-all">
         <Input
           placeholder="Enter YouTube video URL..."
           className="h-10 bg-white shadow-none border-none outline-none"
@@ -41,21 +41,23 @@ const UrlInputBox = ({ thinking, setThinking }: UrlInputBoxProps) => {
           <div className="flex gap-2">
             <Toggle aria-label="Toggle quiz" className="border-1 cursor-pointer">
               <MdQuiz />
-              Quiz
+              <span className="hidden md:block">Quiz</span>
             </Toggle>
             <Toggle aria-label="Toggle flashcards" className="border-1 cursor-pointer">
               <BsCardHeading />
-              Flashcards
+              <span className="hidden md:block">Flashcards</span>
             </Toggle>
             <Toggle aria-label="Toggle practice" className="border-1 cursor-pointer">
               <BsFillPuzzleFill />
-              Practice Problems
+              <span className="hidden md:block">Practice Problems</span>
             </Toggle>
           </div>
           <Button className="h-10 cursor-pointer" onClick={() => setThinking(true)}>
             {thinking ? <FaSquare /> : <BsFillSendFill />}
 
-            {thinking ? 'Cancel' : 'Analyze Video'}
+            <span className="hidden md:block">
+              {thinking ? 'Cancel' : 'Analyze Video'}
+            </span>
           </Button>
         </div>
       </div>
