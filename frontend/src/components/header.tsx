@@ -9,7 +9,7 @@ import {
 
 const Header = () => {
   return (
-    <header className="flex justify-between items-center p-2">
+    <header className="flex justify-between items-center p-2 fixed w-screen">
       <Select defaultValue="free">
         <SelectTrigger className="w-[180px] shadow-none text-xl border-none hover:bg-neutral-200">
           <SelectValue placeholder="Free Plan" />

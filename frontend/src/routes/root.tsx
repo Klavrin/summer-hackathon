@@ -3,6 +3,7 @@ import { Input } from '../components/ui/input'
 import { Toggle } from '../components/ui/toggle'
 import { BsCardHeading, BsFillPuzzleFill } from 'react-icons/bs'
 import { MdQuiz } from 'react-icons/md'
+import { BsFillSendFill } from 'react-icons/bs'
 
 const Root = () => {
   return (
@@ -28,7 +29,10 @@ const Root = () => {
                 Practice Problems
               </Toggle>
             </div>
-            <Button className="h-10">Analyze Video</Button>
+            <Button className="h-10">
+              <BsFillSendFill />
+              Analyze Video
+            </Button>
           </div>
         </div>
       </div>
