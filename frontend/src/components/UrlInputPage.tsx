@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
-import { Button } from './ui/button'
+import styles from './UrlInputPage.module.css'
 
 const UrlInputPage = () => {
   const [url, setUrl] = useState('')
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen gap-4">
-      <label htmlFor="url-input" className="text-lg font-medium">
+    <div className={styles.container}>
+      <label htmlFor="url-input" className={styles.label}>
         Enter URL link
       </label>
       <input
@@ -15,11 +15,14 @@ const UrlInputPage = () => {
         value={url}
         onChange={e => setUrl(e.target.value)}
         placeholder="https://example.com"
-        className="border rounded-md px-4 py-2 w-80 text-base"
+        className={styles.input}
       />
-      <Button onClick={() => alert(`Entered URL: ${url}`)}>
+      <button
+        className={styles.button}
+        onClick={() => alert(`Entered URL: ${url}`)}
+      >
         Submit
-      </Button>
+      </button>
     </div>
   )
 }
