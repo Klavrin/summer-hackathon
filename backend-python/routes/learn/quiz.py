@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from routes.transcript import get_transcript
+from routes.services.transcript import get_transcript
 import openai
 import os
 

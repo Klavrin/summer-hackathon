@@ -1,24 +1,24 @@
 from flask import Blueprint, request, jsonify
-from routes.transcript import get_transcript
+from routes.services.transcript import get_transcript
 import openai
 import os
 
-problems_bp = Blueprint('problems', __name__)
+flashcards_bp = Blueprint('flashcards', __name__)
 
-def generate_problems(transcript):
+def generate_flashcards(transcript):
     client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     prompt = (
-        "You will now write a test with practical tasks based on the input specified in the \"INPUT\" section with the specified format.\n"
-        "FORMAT:\n\n"
-        "*SHORT DESCRIPTION OF THE PRACTICAL TASK*"
-*       "REQUIREMENTS OF THE PRACTICAL TASK*"
+        "You will now write flashcards based on the input specified in the \"INPUT\" section with the specified format in the \"FORMAT\" section.\n\n"
+        "\n\n"
+        "*FRONT*"    
+        "*BACK*"
         f"Transcript:\n{transcript}\n\n"
-        "Problems:"
+        "Flashcards:"
     )
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are a world-class assistant specialised in creating tests for students."},
+            {"role": "system", "content": "You are an expert psychologist specialised in enhancing learning. You are profficient in flashcards creation."},
             {"role": "user", "content": prompt}
         ],
         max_tokens=700,
@@ -26,15 +26,15 @@ def generate_problems(transcript):
     )
     return response.choices[0].message.content.strip()
 
-@problems_bp.route('/problems', methods=['POST'])
-def problems():
+@flashcards_bp.route('/flashcards', methods=['POST'])
+def flashcards():
     data = request.get_json()
     link = data.get('link')
     if not link:
         return jsonify({'error': 'No link provided'}), 400
     try:
         transcript = get_transcript(link)
-        problems_text = generate_problems(transcript)
-        return jsonify({'problems': problems_text})
+        flashcards_text = generate_flashcards(transcript)
+        return jsonify({'flashcards': flashcards_text})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
