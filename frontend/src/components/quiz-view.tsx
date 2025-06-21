@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { cn } from '../lib/utils'
 import { FaCheck } from 'react-icons/fa'
 import { Button } from './ui/button'
+import FinishedQuizView from './finished-quiz-view'
 
 const quiz = [
   {
@@ -35,6 +36,7 @@ const QuizView = () => {
   const [questionProgress, setQuestionProgress] = useState(0)
   const [chosenOption, setChosenOption] = useState<number | null>(null)
   const [quizFinished, setQuizFinished] = useState(false)
+  const [answeredQuestionsRight, setAnsweredQuestionsRight] = useState(0)
 
   const handleNextQuestionButton = () => {
     if (questionProgress < quiz.length - 1) {
@@ -45,9 +47,16 @@ const QuizView = () => {
     setChosenOption(null)
   }
 
+  const handleChooseOption = (option: number, correctIndex: number) => {
+    setChosenOption(option)
+    if (option === correctIndex) {
+      setAnsweredQuestionsRight(answeredQuestionsRight + 1)
+    }
+  }
+
   return (
     <div className="w-[688px]">
-      {!quizFinished && (
+      {!quizFinished ? (
         <>
           <p className="text-neutral-400">
             Question {questionProgress + 1} of {quiz.length}
@@ -62,7 +71,9 @@ const QuizView = () => {
                     ? 'bg-gray-200 hover:bg-gray-200 border-gray-300'
                     : 'bg-auto'
                 )}
-                onClick={() => setChosenOption(index)}
+                onClick={() =>
+                  handleChooseOption(index, quiz[questionProgress].correctIndex)
+                }
               >
                 {item}
                 <div className="w-6 h-6 border border-neutral-400 rounded-full flex items-center justify-center">
@@ -82,6 +93,11 @@ const QuizView = () => {
             </Button>
           </div>
         </>
+      ) : (
+        <FinishedQuizView
+          answeredQuestionsRight={answeredQuestionsRight}
+          quizLength={quiz.length}
+        />
       )}
     </div>
   )

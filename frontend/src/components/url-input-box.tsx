@@ -24,7 +24,7 @@ const UrlInputBox = ({ thinking, setThinking }: UrlInputBoxProps) => {
             exit={{ filter: 'blur(20px)', opacity: 0 }}
             transition={{ duration: 0.6, ease: 'easeInOut' }}
           >
-            <div className="flex gap-2 items-center">
+            <div className="flex gap-2 items-center font-semibold">
               <AiOutlineLoading3Quarters className="animate-spin" />
               Thinking...
             </div>
@@ -39,20 +39,20 @@ const UrlInputBox = ({ thinking, setThinking }: UrlInputBoxProps) => {
         />
         <div className="flex justify-between">
           <div className="flex gap-2">
-            <Toggle aria-label="Toggle quiz" className="border-1">
+            <Toggle aria-label="Toggle quiz" className="border-1 cursor-pointer">
               <MdQuiz />
               Quiz
             </Toggle>
-            <Toggle aria-label="Toggle flashcards" className="border-1">
+            <Toggle aria-label="Toggle flashcards" className="border-1 cursor-pointer">
               <BsCardHeading />
               Flashcards
             </Toggle>
-            <Toggle aria-label="Toggle practice" className="border-1">
+            <Toggle aria-label="Toggle practice" className="border-1 cursor-pointer">
               <BsFillPuzzleFill />
               Practice Problems
             </Toggle>
           </div>
-          <Button className="h-10" onClick={() => setThinking(true)}>
+          <Button className="h-10 cursor-pointer" onClick={() => setThinking(true)}>
             {thinking ? <FaSquare /> : <BsFillSendFill />}
 
             {thinking ? 'Cancel' : 'Analyze Video'}
