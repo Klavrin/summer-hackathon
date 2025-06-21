@@ -1,7 +1,15 @@
 from youtube_transcript_api import YouTubeTranscriptApi
+from pytube import extract
 
-transcript = YouTubeTranscriptApi.get_transcript('3mRvCF4qyTA')
+def extract_video_id(link):
+    id=extract.video_id(link)
+    return id
 
-text_only = [entry['text'] for entry in transcript]
-full_text = ' '.join(text_only)
-print(full_text)
+def get_transcript(link):
+    id = extract_video_id(link)
+    transcript = YouTubeTranscriptApi.get_transcript(id)
+    text_only = [entry['text'] for entry in transcript]
+    full_text = ' '.join(text_only)
+    print(full_text)
+
+'''Execute get_trancript(link), receive long ass string with transcript'''
