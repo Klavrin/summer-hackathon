@@ -13,6 +13,7 @@ def generate_quiz(transcript):
         "You will now write a quiz based on the input specified in the \"INPUT\" section with the specified format."
         "# FORMAT\n\n"
         "SHOULD BE A PARSABLE DICTIONARY PYTHON TYPE SUCH THAT IT CAN BE DIRECTLY READ BY PYTHON AND SHOULD CONTAIN A LIST OF:\n"
+        "Only output the Python list. Do not include any introductory text or dictionary wrappers."
         "\'question\'\n"
         "\'choice1\'\n"
         "\'choice2\'\n"
