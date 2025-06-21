@@ -9,15 +9,20 @@ client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def generate_quiz(transcript):
     prompt = (
-        "Answer only with a generated quiz based on the theme of the following transcript."
-        "Transcript:\n\n"
+        "You will now write a quiz based on the input specified in the \"INPUT\" section with the specified format.\n\n"
+        "FORMAT:\n\n"
+        "*QUESTION*"
+        "A)*CHOICE A*"
+        "B)*CHOICE B*"
+        "C)*CHOICE C*"
+        "D)*CHOICE D*"
         f"{transcript}\n\n"
         "Quiz:"
     )
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are a helpful assistant that creates quizzes."},
+            {"role": "system", "content": "You are a world-class professor with deep knowledge in quiz creation."},
             {"role": "user", "content": prompt}
         ],
         max_tokens=700,
