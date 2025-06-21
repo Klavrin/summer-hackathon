@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@import "tw-animate-css";
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -117,4 +117,23 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.gradient-animate {
+  /* background: linear-gradient(270deg, #4b5563, #1f2937, #111827, #4b5563); */
+  background: linear-gradient(270deg, #7e22ce, #1e40af, #0f766e, #9d174d);
+  background-size: 300% 300%;
+  animation: gradient-shift 4s ease infinite;
 }
