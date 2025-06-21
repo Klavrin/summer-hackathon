@@ -9,14 +9,17 @@ client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def generate_problems(transcript):
     prompt = (
-        "Create 5 challenging problem set questions (with answers) based on the following transcript. "
-        "Each problem should be clear and relevant to the content. Provide the answer after each question.\n\n"
-        f"Transcript:\n{transcript}\n\nProblems:"
+        "You will now write a test with practical tasks based on the input specified in the \"INPUT\" section with the specified format.\n"
+        "FORMAT:\n\n"
+        "*SHORT DESCRIPTION OF THE PRACTICAL TASK*"
+*       "REQUIREMENTS OF THE PRACTICAL TASK*"
+        f"Transcript:\n{transcript}\n\n"
+        "Problems:"
     )
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are a helpful assistant that creates problem sets."},
+            {"role": "system", "content": "You are a world-class assistant specialised in creating tests for students."},
             {"role": "user", "content": prompt}
         ],
         max_tokens=700,

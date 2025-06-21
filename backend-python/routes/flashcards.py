@@ -9,14 +9,17 @@ client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def generate_flashcards(transcript):
     prompt = (
-        ""
-        "Format each flashcard as 'Q: ... A: ...'.\n\n"
-        f"Transcript:\n{transcript}\n\nFlashcards:"
+        "You will now write flashcards based on the input specified in the \"INPUT\" section with the specified format in the \"FORMAT\" section.\n\n"
+        "\n\n"
+        "*KEY WORD*"    
+        "*DEFINITION*"
+        f"Transcript:\n{transcript}\n\n"
+        "Flashcards:"
     )
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are a helpful assistant that creates flashcards."},
+            {"role": "system", "content": "You are an expert psychologist specialised in enhancing learning. You are profficient in flashcards creation."},
             {"role": "user", "content": prompt}
         ],
         max_tokens=700,
