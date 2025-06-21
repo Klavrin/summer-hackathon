@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import UrlInputBox from '../components/url-input-box'
 import { motion, AnimatePresence } from 'framer-motion'
+import FlashcardsView from '../components/flashcards-view'
+import QuizView from '../components/quiz-view'
 
 const Root = () => {
   const [thinking, setThinking] = useState(false)
@@ -19,6 +21,20 @@ const Root = () => {
 
   return (
     <div className="min-w-screen min-h-screen flex justify-center items-center px-8">
+      <AnimatePresence>
+        {movedDown && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.2 }}
+            className="w-full flex justify-center"
+          >
+            {/* <FlashcardsView /> */}
+            <QuizView />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <motion.div
         className="w-[720px] fixed"
         animate={{
