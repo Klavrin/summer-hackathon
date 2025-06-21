@@ -5,14 +5,13 @@ import os
 
 flashcards_bp = Blueprint('flashcards', __name__)
 
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
 def generate_flashcards(transcript):
+    client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     prompt = (
         "You will now write flashcards based on the input specified in the \"INPUT\" section with the specified format in the \"FORMAT\" section.\n\n"
         "\n\n"
-        "*KEY WORD*"    
-        "*DEFINITION*"
+        "*FRONT*"    
+        "*BACK*"
         f"Transcript:\n{transcript}\n\n"
         "Flashcards:"
     )

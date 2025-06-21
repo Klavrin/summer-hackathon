@@ -5,17 +5,17 @@ import os
 
 quiz_bp = Blueprint('quiz', __name__)
 
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
 def generate_quiz(transcript):
+    client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     prompt = (
         "You will now write a quiz based on the input specified in the \"INPUT\" section with the specified format.\n\n"
         "FORMAT:\n\n"
-        "*QUESTION*"
+        "*QUESTION NR. N) *QUESTION*\n*"
         "A)*CHOICE A*"
         "B)*CHOICE B*"
         "C)*CHOICE C*"
         "D)*CHOICE D*"
+        "*ANSWER: CHOICE X*"
         f"{transcript}\n\n"
         "Quiz:"
     )
