@@ -9,15 +9,15 @@ import {
 
 const Header = () => {
   return (
-    <header className="bg-neutral-200 flex justify-end items-center p-2">
-      <Select>
-        <SelectTrigger className="w-[180px]">
-          <SelectValue placeholder="Theme" />
+    <header className="flex justify-between items-center p-2">
+      <Select defaultValue="free">
+        <SelectTrigger className="w-[180px] shadow-none text-xl border-none hover:bg-neutral-200">
+          <SelectValue placeholder="Free Plan" />
         </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="light">Light</SelectItem>
-          <SelectItem value="dark">Dark</SelectItem>
-          <SelectItem value="system">System</SelectItem>
+        <SelectContent defaultValue="free">
+          <SelectItem value="free">Free Plan</SelectItem>
+          <SelectItem value="plus">Plus Plan</SelectItem>
+          <SelectItem value="premium">Premium Plan</SelectItem>
         </SelectContent>
       </Select>
 
