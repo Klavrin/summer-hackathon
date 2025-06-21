@@ -4,6 +4,8 @@ import { Input } from './ui/input'
 import { Toggle } from './ui/toggle'
 import { Button } from './ui/button'
 import { AiOutlineLoading3Quarters } from 'react-icons/ai'
+import { motion, AnimatePresence } from 'framer-motion'
+import { FaSquare } from 'react-icons/fa6'
 
 interface UrlInputBoxProps {
   thinking: boolean
@@ -13,12 +15,22 @@ interface UrlInputBoxProps {
 const UrlInputBox = ({ thinking, setThinking }: UrlInputBoxProps) => {
   return (
     <div className="relative px-4 flex justify-center">
-      <div className="absolute w-[97%] h-[135px] bg-red-500 -z-10 rounded-[20px] -top-6 px-3 py-0.5 text-white text-sm">
-        <div className="flex gap-2 items-center">
-          <AiOutlineLoading3Quarters className="animate-spin" />
-          Thinking...
-        </div>
-      </div>
+      <AnimatePresence>
+        {thinking && (
+          <motion.div
+            className="absolute w-[97%] h-[143px] gradient-animate -z-10 rounded-[20px] -top-8 px-3 py-1.5 text-white text-sm"
+            initial={{ filter: 'blur(20px)', opacity: 0 }}
+            animate={{ filter: 'blur(0px)', opacity: 1 }}
+            exit={{ filter: 'blur(20px)', opacity: 0 }}
+            transition={{ duration: 0.6, ease: 'easeInOut' }}
+          >
+            <div className="flex gap-2 items-center">
+              <AiOutlineLoading3Quarters className="animate-spin" />
+              Thinking...
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div className="w-full flex flex-col gap-2 border-1 p-2 rounded-2xl shadow-sm bg-white">
         <Input
@@ -41,8 +53,9 @@ const UrlInputBox = ({ thinking, setThinking }: UrlInputBoxProps) => {
             </Toggle>
           </div>
           <Button className="h-10" onClick={() => setThinking(true)}>
-            <BsFillSendFill />
-            Analyze Video
+            {thinking ? <FaSquare /> : <BsFillSendFill />}
+
+            {thinking ? 'Cancel' : 'Analyze Video'}
           </Button>
         </div>
       </div>
