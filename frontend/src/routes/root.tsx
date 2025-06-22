@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import FlashcardsView from '../components/flashcards-view'
 import QuizView from '../components/quiz-view'
 import ProblemsView from '../components/problems-view'
+import { cn } from '../lib/utils'
 
 const Root = () => {
   const [thinking, setThinking] = useState(false)
@@ -18,7 +19,12 @@ const Root = () => {
   console.log(optionsChosen)
 
   return (
-    <div className="min-w-screen min-h-screen flex justify-center items-center px-8">
+    <div
+      className={cn(
+        'min-w-screen min-h-screen flex justify-center px-8',
+        !movedDown ? 'items-center' : 'items-start'
+      )}
+    >
       <AnimatePresence>
         {movedDown && (
           <motion.div

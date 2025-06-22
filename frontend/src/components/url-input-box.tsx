@@ -39,9 +39,20 @@ const UrlInputBox = ({
     }
   }
 
+  const isValidYoutubeUrl = (url: string) => {
+    const regex =
+      /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}(&.*)?$/
+    return regex.test(url)
+  }
+
   const handleAnalyseVideo = () => {
     if (!message.trim()) {
       alert('Please enter a valid YouTube video URL before analyzing.')
+      return
+    }
+
+    if (!isValidYoutubeUrl(message.trim())) {
+      alert('Please enter a valid YouTube video URL.')
       return
     }
 
@@ -117,7 +128,7 @@ const UrlInputBox = ({
             }
 
             const data = await response.json()
-            setPractice(data.problems)
+            setPractice(data.items)
           } catch (err) {
             console.error('Practice fetch error:', err)
           }
@@ -132,73 +143,84 @@ const UrlInputBox = ({
   }
 
   return (
-    <div className="relative px-4 flex justify-center">
-      <AnimatePresence>
-        {thinking && (
-          <motion.div
-            className="absolute w-2/3 md:w-[97%] h-[143px] gradient-animate -z-10 rounded-[20px] -top-8 px-3 py-1.5 text-white text-sm transition-all"
-            initial={{ filter: 'blur(20px)', opacity: 0 }}
-            animate={{ filter: 'blur(0px)', opacity: 1 }}
-            exit={{ filter: 'blur(20px)', opacity: 0 }}
-            transition={{ duration: 0.6, ease: 'easeInOut' }}
-          >
-            <div className="flex gap-2 items-center font-semibold">
-              <AiOutlineLoading3Quarters className="animate-spin" />
-              Thinking...
+    <>
+      <div className="fixed w-screen h-[135px] bg-white bottom-0 right-0"></div>
+
+      <div className="relative px-4 flex justify-center">
+        <AnimatePresence>
+          {thinking && (
+            <motion.div
+              className="absolute w-2/3 md:w-[97%] h-[143px] gradient-animate -z-10 rounded-[20px] -top-8 px-3 py-1.5 text-white text-sm transition-all"
+              initial={{ filter: 'blur(20px)', opacity: 0 }}
+              animate={{ filter: 'blur(0px)', opacity: 1 }}
+              exit={{ filter: 'blur(20px)', opacity: 0 }}
+              transition={{ duration: 0.6, ease: 'easeInOut' }}
+            >
+              <div className="flex gap-2 items-center font-semibold">
+                <AiOutlineLoading3Quarters className="animate-spin" />
+                Thinking...
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <div className="w-[68%] md:w-full flex flex-col gap-2 border-1 p-2 rounded-2xl shadow-sm bg-white transition-all">
+          <Input
+            placeholder="Enter YouTube video URL..."
+            className="h-10 bg-white shadow-none border-none outline-none"
+            onChange={(e) => setMessage(e.target.value)}
+          />
+          <div className="flex justify-between">
+            <div className="flex gap-2">
+              <Toggle
+                aria-label="Toggle quiz"
+                className={`border-1 cursor-pointer ${
+                  optionsChosen.includes('quiz') ? 'bg-blue-500 text-white' : ''
+                }`}
+                onClick={() => toggleOption('quiz')}
+                disabled={thinking}
+              >
+                <MdQuiz />
+                <span className="hidden md:block">Quiz</span>
+              </Toggle>
+              <Toggle
+                aria-label="Toggle flashcards"
+                className={`border-1 cursor-pointer ${
+                  optionsChosen.includes('flashcards') ? 'bg-blue-500 text-white' : ''
+                }`}
+                onClick={() => toggleOption('flashcards')}
+                disabled={thinking}
+              >
+                <BsCardHeading />
+                <span className="hidden md:block">Flashcards</span>
+              </Toggle>
+              <Toggle
+                aria-label="Toggle practice"
+                className={`border-1 cursor-pointer ${
+                  optionsChosen.includes('practice') ? 'bg-blue-500 text-white' : ''
+                }`}
+                onClick={() => toggleOption('practice')}
+                disabled={thinking}
+              >
+                <BsFillPuzzleFill />
+                <span className="hidden md:block">Practice Problems</span>
+              </Toggle>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            <Button
+              className="h-10 cursor-pointer"
+              onClick={handleAnalyseVideo}
+              disabled={optionsChosen.length === 0}
+            >
+              {thinking ? <FaSquare /> : <BsFillSendFill />}
 
-      <div className="w-[68%] md:w-full flex flex-col gap-2 border-1 p-2 rounded-2xl shadow-sm bg-white transition-all">
-        <Input
-          placeholder="Enter YouTube video URL..."
-          className="h-10 bg-white shadow-none border-none outline-none"
-          onChange={(e) => setMessage(e.target.value)}
-        />
-        <div className="flex justify-between">
-          <div className="flex gap-2">
-            <Toggle
-              aria-label="Toggle quiz"
-              className={`border-1 cursor-pointer ${
-                optionsChosen.includes('quiz') ? 'bg-blue-500 text-white' : ''
-              }`}
-              onClick={() => toggleOption('quiz')}
-            >
-              <MdQuiz />
-              <span className="hidden md:block">Quiz</span>
-            </Toggle>
-            <Toggle
-              aria-label="Toggle flashcards"
-              className={`border-1 cursor-pointer ${
-                optionsChosen.includes('flashcards') ? 'bg-blue-500 text-white' : ''
-              }`}
-              onClick={() => toggleOption('flashcards')}
-            >
-              <BsCardHeading />
-              <span className="hidden md:block">Flashcards</span>
-            </Toggle>
-            <Toggle
-              aria-label="Toggle practice"
-              className={`border-1 cursor-pointer ${
-                optionsChosen.includes('practice') ? 'bg-blue-500 text-white' : ''
-              }`}
-              onClick={() => toggleOption('practice')}
-            >
-              <BsFillPuzzleFill />
-              <span className="hidden md:block">Practice Problems</span>
-            </Toggle>
+              <span className="hidden md:block">
+                {thinking ? 'Cancel' : 'Analyze Video'}
+              </span>
+            </Button>
           </div>
-          <Button className="h-10 cursor-pointer" onClick={handleAnalyseVideo}>
-            {thinking ? <FaSquare /> : <BsFillSendFill />}
-
-            <span className="hidden md:block">
-              {thinking ? 'Cancel' : 'Analyze Video'}
-            </span>
-          </Button>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

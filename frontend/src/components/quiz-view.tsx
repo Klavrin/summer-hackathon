@@ -66,7 +66,7 @@ const QuizView = ({ quiz }: QuizViewProps) => {
       {hidden && (
         <DraggableElement innerText="Quiz" onDoubleClick={() => setHidden(false)} />
       )}
-      <div className={cn('w-[688px]', hidden ? 'hidden' : 'block')}>
+      <div className={cn('w-[688px] mt-56', hidden ? 'hidden' : 'block')}>
         {!quizFinished ? (
           <>
             <div

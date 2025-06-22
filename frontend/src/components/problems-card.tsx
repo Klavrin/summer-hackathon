@@ -7,18 +7,19 @@ import { BsFillSendFill } from 'react-icons/bs'
 import { useState } from 'react'
 
 interface ProblemsCardProps {
-  problem: string
+  problem: any
   onClose: () => void
 }
 
 const ProblemsCard = ({ problem, onClose }: ProblemsCardProps) => {
-  const [optionChoicen, setOptionChoicen] = useState<'answer' | 'solution' | null>(null)
+  const [optionChosen, setOptionChosen] = useState<'answer' | 'solution' | null>(null)
+  const [showContent, setShowContent] = useState(false)
 
   const handleToggle = (choice: 'answer' | 'solution') => {
-    setOptionChoicen((prev) => (prev === choice ? null : choice))
+    setOptionChosen((prev) => (prev === choice ? null : choice))
   }
 
-  const isOptionActive = optionChoicen !== null
+  const isOptionActive = optionChosen !== null
 
   return (
     <motion.div
@@ -42,25 +43,75 @@ const ProblemsCard = ({ problem, onClose }: ProblemsCardProps) => {
         </div>
 
         <div className="flex flex-col justify-between h-[90%]">
-          <div>
+          <div className="overflow-y-scroll mb-2">
             <div className="rounded-lg p-3 px-5 bg-white max-w-3/4 border-1 shadow-sm">
-              {problem}
+              {problem.question}
             </div>
+
+            {showContent && optionChosen === 'answer' && (
+              <div className="mt-4 w-full">
+                <div className="flex justify-end">
+                  <motion.div
+                    initial={{ x: 100 }}
+                    animate={{ x: 0 }}
+                    className="bg-neutral-100 rounded-lg p-3 px-5 max-w-3/4 border-1 shadow-sm self-end"
+                  >
+                    Answer
+                  </motion.div>
+                </div>
+
+                <motion.div
+                  initial={{ x: -100, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="bg-white rounded-lg p-3 px-5 max-w-3/4 border-1 shadow-sm self-end mt-4"
+                >
+                  The answer is: {problem.answer}
+                </motion.div>
+              </div>
+            )}
+            {showContent && optionChosen === 'solution' && (
+              <div className="mt-4 w-full">
+                <div className="flex justify-end">
+                  <motion.div
+                    initial={{ x: 100 }}
+                    animate={{ x: 0 }}
+                    className="bg-neutral-100 rounded-lg p-3 px-5 max-w-3/4 border-1 shadow-sm self-end"
+                  >
+                    Solution
+                  </motion.div>
+                </div>
+
+                <motion.div
+                  initial={{ x: -100, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="bg-white rounded-lg p-3 px-5 max-w-3/4 border-1 shadow-sm self-end mt-4"
+                >
+                  <ol className="list-decimal list-inside ml-5 space-y-1">
+                    {problem.steps.map((step: string, index: number) => (
+                      <li key={index}>{step}</li>
+                    ))}
+                  </ol>
+                </motion.div>
+              </div>
+            )}
           </div>
+
           <div className="w-full flex gap-2">
             <Toggle
               className="px-4 border-1"
               onClick={() => handleToggle('answer')}
-              disabled={isOptionActive && optionChoicen !== 'answer'}
-              pressed={optionChoicen === 'answer'}
+              disabled={isOptionActive && optionChosen !== 'answer'}
+              pressed={optionChosen === 'answer'}
             >
               Answer
             </Toggle>
             <Toggle
               className="px-4 border-1"
               onClick={() => handleToggle('solution')}
-              disabled={isOptionActive && optionChoicen !== 'solution'}
-              pressed={optionChoicen === 'solution'}
+              disabled={isOptionActive && optionChosen !== 'solution'}
+              pressed={optionChosen === 'solution'}
             >
               Solution
             </Toggle>
@@ -69,7 +120,14 @@ const ProblemsCard = ({ problem, onClose }: ProblemsCardProps) => {
               className="w-full"
               disabled={isOptionActive}
             />
-            <Button className="cursor-pointer">
+            <Button
+              className="cursor-pointer"
+              disabled={showContent}
+              onClick={() => {
+                setShowContent(true)
+                localStorage.setItem('solvedProblems', JSON.stringify(problem.question))
+              }}
+            >
               <BsFillSendFill />
             </Button>
           </div>

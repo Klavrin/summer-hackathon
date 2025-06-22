@@ -20,7 +20,10 @@ const ProblemsView = ({ problems }: { problems: string[] }) => {
       )}
 
       <div
-        className={cn('flex flex-col gap-2 max-w-[688px]', hidden ? 'hidden' : 'block')}
+        className={cn(
+          'flex flex-col gap-2 max-w-[688px] mt-56',
+          hidden ? 'hidden' : 'block'
+        )}
       >
         <div className="flex justify-between items-center">
           <h1 className="text-xl">Choose a problem:</h1>
@@ -30,13 +33,21 @@ const ProblemsView = ({ problems }: { problems: string[] }) => {
         </div>
 
         <div className="flex flex-col gap-2">
-          {problems.map((prob) => (
+          {problems.map((prob: any) => (
             <div
-              key={prob}
+              key={prob.question}
               onClick={() => setProblemChoice(prob)}
-              className="border-1 shadow-sm p-2 px-4 rounded-md cursor-pointer hover:bg-neutral-100"
+              className={cn(
+                'border-1 shadow-sm p-2 px-4 rounded-md cursor-pointer hover:bg-neutral-100',
+                JSON.parse(localStorage.getItem('solvedProblems') as any) &&
+                  JSON.parse(localStorage.getItem('solvedProblems') as any).includes(
+                    prob.question
+                  )
+                  ? 'bg-neutral-300 hover:bg-neutral-300 pointer-events-none'
+                  : ''
+              )}
             >
-              {prob}
+              {prob.question}
             </div>
           ))}
         </div>
