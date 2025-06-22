@@ -7,6 +7,8 @@ from routes.learn.quiz import quiz_bp
 from routes.learn.flashcards import flashcards_bp
 from routes.learn.problems import problems_bp
 from routes.learn.answers import answers_bp
+#from routes.services.supabase_client import get_supabase
+#from routes.services.conversation import conv_bp
 
 load_dotenv()
 
@@ -18,6 +20,7 @@ app.register_blueprint(quiz_bp)
 app.register_blueprint(flashcards_bp)
 app.register_blueprint(problems_bp)
 app.register_blueprint(answers_bp)
+#app.register_blueprint(conv_bp)
 
 if __name__ == '__main__':
     app.run(debug=True)
