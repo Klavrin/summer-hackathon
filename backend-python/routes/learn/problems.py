@@ -34,6 +34,31 @@ def generate_problems(transcript):
     )
     return response.choices[0].message.content.strip()
 
+def grade_problem_answer(question: str, user_answer: str) -> str:
+    client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    prompt = (
+        "# GOAL\n\n"
+        "Grade the student's answer to the given question.\n\n"
+        "# FORMAT\n\n"
+        "Return **only valid JSON** with the following keys:\n"
+        "- \"score\": integer from 0 to 100\n"
+        "- \"feedback\": string (concise evaluation and suggestions)\n\n"
+        "# INPUT\n\n"
+        f"Question: {question}\n"
+        f"Student Answer: {user_answer}\n"
+    )
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are an expert instructor. Provide an objective score and feedback for student answers."},
+            {"role": "user", "content": prompt}
+        ],
+        max_tokens=700,
+        temperature=0.0,
+    )
+    return response.choices[0].message.content.strip()
+
+
 @problems_bp.route('/problems', methods=['POST'])
 def problems():
     data = request.get_json() or {}
@@ -56,6 +81,24 @@ def problems():
             })
 
         return jsonify({"items": items}), 200
+
+    except ValueError as ve:
+        return jsonify({'error': f'Parsing error: {ve}'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+@problems_bp.route('/grade', methods=['POST'])
+def grade():
+    data = request.get_json() or {}
+    question = data.get('question')
+    user_answer = data.get('answer')
+    if not question or user_answer is None:
+        return jsonify({'error': 'Both question and answer are required'}), 400
+
+    try:
+        raw_grade = grade_problem_answer(question, user_answer)
+        grade_obj = parse_grade(raw_grade)
+        return jsonify(grade_obj), 200
 
     except ValueError as ve:
         return jsonify({'error': f'Parsing error: {ve}'}), 500
