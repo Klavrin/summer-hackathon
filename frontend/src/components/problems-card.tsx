@@ -14,6 +14,9 @@ interface ProblemsCardProps {
 const ProblemsCard = ({ problem, onClose }: ProblemsCardProps) => {
   const [optionChosen, setOptionChosen] = useState<'answer' | 'solution' | null>(null)
   const [showContent, setShowContent] = useState(false)
+  const [message, setMessage] = useState('')
+  const [feedback, setFeedback] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
 
   const handleToggle = (choice: 'answer' | 'solution') => {
     setOptionChosen((prev) => (prev === choice ? null : choice))
@@ -96,6 +99,36 @@ const ProblemsCard = ({ problem, onClose }: ProblemsCardProps) => {
                 </motion.div>
               </div>
             )}
+
+            {showContent && !optionChosen && (
+              <div className="mt-4 w-full">
+                <div className="flex justify-end">
+                  <motion.div
+                    initial={{ x: 100 }}
+                    animate={{ x: 0 }}
+                    className="bg-neutral-100 rounded-lg p-3 px-5 max-w-3/4 border-1 shadow-sm self-end"
+                  >
+                    {message}
+                  </motion.div>
+                </div>
+
+                <motion.div
+                  initial={{ x: -100, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.4 }}
+                  className="bg-white rounded-lg p-3 px-5 max-w-3/4 border-1 shadow-sm self-end mt-4"
+                >
+                  {loading ? (
+                    <div>LOADING...</div>
+                  ) : (
+                    <div>
+                      {feedback.feedback} <br />
+                      <br /> Your score: {feedback.score}/100
+                    </div>
+                  )}
+                </motion.div>
+              </div>
+            )}
           </div>
 
           <div className="w-full flex gap-2">
@@ -117,6 +150,7 @@ const ProblemsCard = ({ problem, onClose }: ProblemsCardProps) => {
             </Toggle>
             <Input
               placeholder="Your answer goes here..."
+              onChange={(e) => setMessage(e.target.value)}
               className="w-full"
               disabled={isOptionActive}
             />
@@ -126,6 +160,35 @@ const ProblemsCard = ({ problem, onClose }: ProblemsCardProps) => {
               onClick={() => {
                 setShowContent(true)
                 localStorage.setItem('solvedProblems', JSON.stringify(problem.question))
+
+                if (!optionChosen) {
+                  const sendMessage = async () => {
+                    try {
+                      const response = await fetch('http://127.0.0.1:5000/grade', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          question: problem.question,
+                          answer: message
+                        })
+                      })
+
+                      if (!response.ok) {
+                        const errorText = await response.text()
+                        console.error('Flashcards error:', errorText)
+                        return
+                      }
+
+                      const data = await response.json()
+                      console.log('my fucking data', data)
+                      setFeedback(data)
+                      setLoading(false)
+                    } catch (err) {
+                      console.error('Flashcards fetch error:', err)
+                    }
+                  }
+                  sendMessage()
+                }
               }}
             >
               <BsFillSendFill />
