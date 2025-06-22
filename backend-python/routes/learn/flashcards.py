@@ -28,7 +28,7 @@ def generate_flashcards(transcript):
             {"role": "system", "content": "You are an expert psychologist specialised in enhancing learning. You are profficient in flashcards creation."},
             {"role": "user", "content": prompt}
         ],
-        max_tokens=700,
+        max_tokens=1000,
         temperature=0.7,
     )
     return response.choices[0].message.content.strip()
