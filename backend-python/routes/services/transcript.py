@@ -1,11 +1,13 @@
 from flask import Blueprint, request, jsonify
 from youtube_transcript_api import YouTubeTranscriptApi
+from pytube.exceptions import RegexMatchError
 from pytube import extract
 
 transcript_bp = Blueprint('transcript', __name__)
 
 def extract_video_id(link):
     id = extract.video_id(link)
+    raise ValueError("Invalid YouTube video ID format")
     return id
 
 def get_transcript(link):
