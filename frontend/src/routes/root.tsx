@@ -13,6 +13,7 @@ const Root = () => {
   const [flashcards, setFlashcards] = useState([])
   const [practice, setPractice] = useState([])
 
+  console.log(quiz)
   console.log(optionsChosen)
 
   return (

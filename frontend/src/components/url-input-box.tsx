@@ -92,7 +92,7 @@ const UrlInputBox = ({
             }
 
             const data = await response.json()
-            setQuiz(data)
+            setQuiz(data.quiz)
           } catch (err) {
             console.error('Quiz fetch error:', err)
           }
