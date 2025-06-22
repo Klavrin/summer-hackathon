@@ -6,6 +6,7 @@ from routes.services.transcript import transcript_bp
 from routes.learn.quiz import quiz_bp
 from routes.learn.flashcards import flashcards_bp
 from routes.learn.problems import problems_bp
+from routes.learn.answers import answers_bp
 
 load_dotenv()
 
@@ -16,6 +17,7 @@ app.register_blueprint(transcript_bp)
 app.register_blueprint(quiz_bp)
 app.register_blueprint(flashcards_bp)
 app.register_blueprint(problems_bp)
+app.register_blueprint(answers_bp)
 
 if __name__ == '__main__':
     app.run(debug=True)
