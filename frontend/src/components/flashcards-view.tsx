@@ -1,4 +1,9 @@
+import { useState } from 'react'
 import { FlashcardArray } from 'react-quizlet-flashcard'
+import { IoMdClose } from 'react-icons/io'
+import { Button } from './ui/button'
+import { cn } from '../lib/utils'
+import DraggableElement from './draggable-element'
 
 function transformFlashcards(data: any) {
   if (!Array.isArray(data)) {
@@ -26,10 +31,22 @@ interface FlashcardsViewProps {
 }
 
 const FlashcardsView = ({ flashcards }: FlashcardsViewProps) => {
+  const [hidden, setHidden] = useState(false)
+
   return (
-    <div>
-      <FlashcardArray cards={transformFlashcards(flashcards)} />
-    </div>
+    <>
+      {hidden && (
+        <DraggableElement innerText="Flashcards" onDoubleClick={() => setHidden(false)} />
+      )}
+      <div className={cn('flex flex-col items-end', hidden ? 'hidden' : 'block')}>
+        <div className="flex justify-end">
+          <Button variant="ghost" className="mb-1" onClick={() => setHidden(true)}>
+            <IoMdClose />
+          </Button>
+        </div>
+        <FlashcardArray cards={transformFlashcards(flashcards)} />
+      </div>
+    </>
   )
 }
 

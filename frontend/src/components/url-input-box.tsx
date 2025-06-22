@@ -104,7 +104,7 @@ const UrlInputBox = ({
       promises.push(
         (async () => {
           try {
-            const response = await fetch('http://127.0.0.1:5000/practice', {
+            const response = await fetch('http://127.0.0.1:5000/problems', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ link: message })
@@ -117,7 +117,7 @@ const UrlInputBox = ({
             }
 
             const data = await response.json()
-            setPractice(data)
+            setPractice(data.problems)
           } catch (err) {
             console.error('Practice fetch error:', err)
           }

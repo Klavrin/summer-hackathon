@@ -3,6 +3,7 @@ import UrlInputBox from '../components/url-input-box'
 import { motion, AnimatePresence } from 'framer-motion'
 import FlashcardsView from '../components/flashcards-view'
 import QuizView from '../components/quiz-view'
+import ProblemsView from '../components/problems-view'
 
 const Root = () => {
   const [thinking, setThinking] = useState(false)
@@ -38,6 +39,9 @@ const Root = () => {
                     <FlashcardsView flashcards={flashcards} />
                   )}
                   {optionsChosen.includes('quiz') && <QuizView quiz={quiz} />}
+                  {optionsChosen.includes('practice') && (
+                    <ProblemsView problems={practice} />
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
