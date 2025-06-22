@@ -38,7 +38,7 @@ const FlashcardsView = ({ flashcards }: FlashcardsViewProps) => {
       {hidden && (
         <DraggableElement innerText="Flashcards" onDoubleClick={() => setHidden(false)} />
       )}
-      <div className={cn('flex flex-col items-end', hidden ? 'hidden' : 'block')}>
+      <div className={cn('flex flex-col items-end mt-56', hidden ? 'hidden' : 'block')}>
         <div className="flex justify-end">
           <Button variant="ghost" className="mb-1" onClick={() => setHidden(true)}>
             <IoMdClose />

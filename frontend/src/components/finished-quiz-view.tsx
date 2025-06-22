@@ -22,7 +22,7 @@ const FinishedQuizView = ({
   choices
 }: FinishedQuizViewProps) => {
   return (
-    <div className="mt-44">
+    <div>
       <h2 className="text-center text-2xl mb-8">
         You got {rightIndeces.length}/{quizLength} questions right.
       </h2>
