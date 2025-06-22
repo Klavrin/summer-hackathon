@@ -128,3 +128,25 @@ def parse_answer(llm_output: str, include_steps: bool):
         return data
     else:
         return {"answer": str(data.get("answer"))}
+    
+def parse_grade(llm_output: str) -> dict:
+    start = llm_output.find('{')
+    if start == -1:
+        raise ValueError("No JSON object found in LLM output")
+    depth = 0
+    end = None
+    for i, ch in enumerate(llm_output[start:], start):
+        if ch == '{':
+            depth += 1
+        elif ch == '}':
+            depth -= 1
+            if depth == 0:
+                end = i + 1
+                break
+    if end is None:
+        raise ValueError("Could not find matching '}' for JSON object")
+    payload = llm_output[start:end]
+    try:
+        return json.loads(payload)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON payload: {e}")

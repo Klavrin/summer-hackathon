@@ -1,7 +1,8 @@
 from flask import Blueprint, request, jsonify
 from routes.services.transcript import get_transcript
-from routes.services.parser import parse_test, parse_answer
+from routes.services.parser import parse_test, parse_answer, parse_grade
 from routes.learn.answers import generate_answer
+import json
 import openai
 import os
 
