@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from routes.services.transcript import get_transcript
-from routes.services.parser import parse_test
+from routes.services.parser import parse_test, parse_answer
+from routes.learn.answers import generate_answer
 import openai
 import os
 
@@ -34,18 +35,28 @@ def generate_problems(transcript):
 
 @problems_bp.route('/problems', methods=['POST'])
 def problems():
-    data = request.get_json()
+    data = request.get_json() or {}
     link = data.get('link')
     if not link:
         return jsonify({'error': 'No link provided'}), 400
 
     try:
-        transcript = get_transcript(link)
-        raw = generate_problems(transcript)
-        problems_list = parse_test(raw)
-        return jsonify({'problems': problems_list}), 200
+        transcript    = get_transcript(link)
+        raw_problems  = generate_problems(transcript)
+        problems_list = parse_test(raw_problems)
+
+        items = []
+        for q in problems_list:
+            raw_ans = generate_answer(q)
+            ans_obj = parse_answer(raw_ans, include_steps=True)
+            items.append({
+                "question": q,
+                **ans_obj
+            })
+
+        return jsonify({"items": items}), 200
 
     except ValueError as ve:
-        return jsonify({'error': f'Could not parse problems: {ve}'}), 500
+        return jsonify({'error': f'Parsing error: {ve}'}), 500
     except Exception as e:
         return jsonify({'error': str(e)}), 500
