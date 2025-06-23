@@ -159,7 +159,13 @@ const ProblemsCard = ({ problem, onClose }: ProblemsCardProps) => {
               disabled={showContent}
               onClick={() => {
                 setShowContent(true)
-                localStorage.setItem('solvedProblems', JSON.stringify(problem.question))
+                // localStorage.setItem(
+                //   'solvedProblems',
+                //   JSON.stringify([
+                //     ...JSON.parse(JSON.stringify(localStorage.getItem('solvedProblems'))),
+                //     problem.question
+                //   ])
+                // )
 
                 if (!optionChosen) {
                   const sendMessage = async () => {

@@ -144,7 +144,7 @@ const UrlInputBox = ({
 
   return (
     <>
-      <div className="fixed w-screen h-[135px] bg-white bottom-0 right-0"></div>
+      {/* <div className="fixed w-screen h-[135px] bg-white bottom-0 right-0"></div> */}
 
       <div className="relative px-4 flex justify-center">
         <AnimatePresence>

@@ -14,12 +14,12 @@ function transformFlashcards(data: any) {
   return data.map((card: any, index: number) => ({
     id: index + 1,
     frontHTML: (
-      <div className="flex justify-center items-center w-full h-full p-4 text-xl">
+      <div className="flex justify-center items-center text-center w-full h-full p-4 text-xl">
         {card.front}
       </div>
     ),
     backHTML: (
-      <div className="flex justify-center items-center w-full h-full p-4">
+      <div className="flex text-center justify-center items-center w-full h-full p-4">
         {card.backshot}
       </div>
     )
